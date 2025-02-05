@@ -1,0 +1,2 @@
+timestamp,cpu,memory,disk_write,disk_read,gpu,gpu_details
+2025-02-04T18:13:59.518776,0.07859969139099121,1.1458518505096436,0.07294964790344238,0.022766828536987305,2,"{'utilization': 2, 'temperature': 54, 'memory_used': 1938, 'memory_total': 8192}"
