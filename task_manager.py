@@ -63,8 +63,11 @@ def route_task(task, agent_id):
         logging.info("Routing task to AutoGPT prototype.")
         return send_task_to_autogpt(task)
 
-if __name__ == "__main__":
-    # Register the agent first and get the agent_id.
+def main():
+    """
+    Main function for testing the task manager.
+    """
+    # Register the agent and obtain the agent_id.
     registered_agent_id = register_agent()
     if not registered_agent_id:
         logging.error("Agent registration failed. Exiting.")
@@ -74,3 +77,7 @@ if __name__ == "__main__":
     test_task = "Explain SPX volatility smile dynamics"
     result = route_task(test_task, registered_agent_id)
     logging.info("Task routing result: %s", result)
+
+if __name__ == "__main__":
+    main()
+

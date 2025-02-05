@@ -9,7 +9,6 @@ dependencies:
   - urllib3
   - requests
   - colorama
-  - fastlogging
   - Jinja2
   - mistletoe
   - markdownify
@@ -24,19 +23,20 @@ dependencies:
   - sqlmodel
   - keybert
   - GitPython
-  - netlify-py
   - Markdown
   - xhtml2pdf
   - mistralai
   - Flask-SocketIO
   - eventlet
   - groq
-  - duckduckgo-search
   - orjson
   - gevent
   - gevent-websocket
-  - curl_cffi
   
   - pip
   - pip:
+    - fastlogging
+    - netlify-py
+    - duckduckgo-search
+    - curl_cffi
     
