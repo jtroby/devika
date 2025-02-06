@@ -35,7 +35,8 @@ NOW = time.time()
 def move_old_files(directory, destination, days_old):
     """ Move files older than specified days to a backup folder. """
     if not os.path.exists(destination):
-        os.makedirs(destination, exist_ok=True)
+        print(f"🚨 ERROR: Directory '{directory}' does not exist. Creating it now...")
+        os.makedirs(directory, exist_ok=True)
     
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
