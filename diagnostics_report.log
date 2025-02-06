@@ -1,0 +1,64 @@
+===== SYSTEM DIAGNOSTICS REPORT =====
+Running automated system diagnostics...
+
+[🟢] Checking Conda & Virtual Environments...
+[✅] Conda installed: conda 24.11.1
+[🔍] Available Conda Environments:
+
+# conda environments:
+#
+base                   /home/jt-msi/miniconda3
+automation_env       * /home/jt-msi/miniconda3/envs/automation_env
+
+
+[🟢] Checking Python Virtual Environments...
+[✅] Virtual environments found in ~/.virtualenvs:
+project_env
+
+[🟢] Checking Docker...
+[✅] Docker installed: Docker version 26.1.3, build 26.1.3-0ubuntu1~22.04.1
+[✅] Docker is running.
+
+[🟢] Checking Minikube...
+[✅] Minikube installed: minikube version: v1.35.0
+commit: dd5d320e41b5451cdf3c01891bc4e13d189586ed-dirty
+[✅] Minikube is running.
+
+[🟢] Checking Ollama API...
+[ERROR] Ollama API is NOT responding!
+
+[🟢] Checking System Health...
+[🔍] CPU Info: Model name:                           Intel(R) Core(TM) i7-6700HQ CPU @ 2.60GHz
+[🔍] Memory Usage:
+               total        used        free      shared  buff/cache   available
+Mem:            11Gi       3.2Gi       187Mi        13Mi       8.3Gi       8.2Gi
+Swap:          8.0Gi       2.0Gi       6.0Gi
+[🔍] Disk Usage:
+Filesystem                                Size  Used Avail Use% Mounted on
+none                                      5.9G     0  5.9G   0% /usr/lib/modules/5.15.167.4-microsoft-standard-WSL2
+none                                      5.9G  4.0K  5.9G   1% /mnt/wsl
+drivers                                   931G  366G  566G  40% /usr/lib/wsl/drivers
+/dev/sdc                                 1007G   50G  906G   6% /
+none                                      5.9G     0  5.9G   0% /usr/lib/wsl/lib
+rootfs                                    5.9G  2.2M  5.9G   1% /init
+none                                      5.9G  840K  5.9G   1% /run
+none                                      5.9G     0  5.9G   0% /run/lock
+none                                      5.9G     0  5.9G   0% /run/shm
+tmpfs                                     4.0M     0  4.0M   0% /sys/fs/cgroup
+C:\                                       931G  366G  566G  40% /mnt/c
+D:\                                       1.9T  292G  1.6T  16% /mnt/d
+tmpfs                                     5.9G     0  5.9G   0% /run/qemu
+snapfuse                                   13M   13M     0 100% /snap/kubectl/3498
+snapfuse                                   64M   64M     0 100% /snap/core20/2434
+snapfuse                                  128K  128K     0 100% /snap/hello-world/29
+snapfuse                                  105M  105M     0 100% /snap/core/17200
+snapfuse                                   45M   45M     0 100% /snap/snapd/23545
+none                                      5.9G  8.0K  5.9G   1% /mnt/wsl/docker-desktop/shared-sockets/host-services
+/dev/sdd                                 1007G   57M  956G   1% /run/timeshift/backup
+C:\Program Files\Docker\Docker\resources  931G  366G  566G  40% /Docker/host
+/dev/loop0                                494M  494M     0 100% /mnt/wsl/docker-desktop/cli-tools
+snapfuse                                   74M   74M     0 100% /snap/core22/1748
+snapfuse                                   30M   30M     0 100% /snap/bun-js/58
+[✅] Found: /home/jt-msi/control_center/core_automation_logic.sh
+[✅] Found: /home/jt-msi/control_center/self_healing_recovery.sh
+[✅] Found: /home/jt-msi/ollama/setup_ollama_api.sh
