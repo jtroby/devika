@@ -5,8 +5,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 3 * * *" # Runs every day at 03:00 UTC
-  workflow_dispatch: # Allows manual triggering
+    - cron: "0 3 * * *"
+  workflow_dispatch:
 
 jobs:
   cleanup:
@@ -16,19 +16,34 @@ jobs:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v3
         with:
-          submodules: false # Prevents submodule errors
-          fetch-depth: 1 # Only fetch the latest commit
+          submodules: false
+          fetch-depth: 1
+      - name: 🔍 Debug Directory Permissions
+        run: |
+          echo "🔍 Checking Current User & Groups"
+          whoami
+          id
 
-      - name: 📂 Verify Files Exist (Debugging)
+          echo "🔍 Checking Home Directory"
+          ls -ld ~
+
+          echo "🔍 Checking automation_logs Directory"
+          ls -ld automation_logs || echo "🚨 automation_logs NOT FOUND!"
+
+          echo "🔍 Checking backups Directory"
+          ls -ld backups || echo "🚨 backups NOT FOUND!"
+
+      - name: 🔧 Fix Permissions for automation_logs
+        run: |
+          chmod -R 777 automation_logs
+
+      - name: 📂 Verify Files Exist
         run: |
           echo "Current Directory: $(pwd)"
-          echo "Listing Files:"
           ls -la
 
       - name: 🧹 Run Cleanup Script
-        run: |
-          python3 cleanup_files.py
-        working-directory: ${{ github.workspace }}
+        run: python3 cleanup_files.py
 
       - name: 📤 Commit and Push Backup Changes
         run: |
