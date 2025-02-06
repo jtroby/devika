@@ -1,40 +1,39 @@
 name: System Monitor & Auto-Backup
 
 on:
-  schedule:
-    - cron: "0 0 * * *" # Runs every day at midnight UTC
   push:
     branches:
       - main
+  schedule:
+    - cron: "0 3 * * *" # Runs every day at 03:00 UTC
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
-  backup:
+  cleanup:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: false # Prevents submodule errors
+          fetch-depth: 1 # Only fetch the latest commit
 
-      - name: Ensure Backup Directory Exists
-        run: mkdir -p ${{ github.workspace }}/backups && chmod -R 777 ${{ github.workspace }}/backups
-
-      - name: Run Cleanup Script
-        run: python3 cleanup_files.py
-
-      - name: Configure Git
+      - name: 📂 Verify Files Exist (Debugging)
         run: |
-          git config --global user.email "jamaalroby@gmail.com"
-          git config --global user.name "jtroby"
-          git config --global credential.helper store
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/jtroby/devika.git
+          echo "Current Directory: $(pwd)"
+          echo "Listing Files:"
+          ls -la
 
-      - name: Commit System State
+      - name: 🧹 Run Cleanup Script
         run: |
-          git add ~/automation_logs/ ~/control_center/
-          git commit -m "🔄 Auto-Backup System State - $(date)" || echo "No changes to commit"
+          python3 cleanup_files.py
+        working-directory: ${{ github.workspace }}
+
+      - name: 📤 Commit and Push Backup Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add backups/
+          git commit -m "🛠️ Automated backup update [CI]" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
-
-      - name: Notify Discord (Optional)
-        run: |
-          curl -H "Content-Type: application/json" \
-          -X POST -d '{"content": "🔄 System backup completed successfully."}' \
-          https://discord.com/api/webhooks/YOUR_WEBHOOK_URL
