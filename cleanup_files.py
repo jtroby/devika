@@ -2,11 +2,15 @@ import os
 import shutil
 import time
 from pathlib import Path
+import platform
 
 # Define directories
 BASE_DIR = Path.home() / "control_center"
 LOG_DIR = Path.home() / "automation_logs"
-BACKUP_DIR = Path("/mnt/d/Backups")
+if "GITHUB_ACTIONS" in os.environ:
+    BACKUP_DIR = Path("/home/runner/work/devika/devika/backups")
+else:
+    BACKUP_DIR = Path("/mnt/d/Backups")
 
 # Set cleanup thresholds
 DAYS_OLD = 30
@@ -15,7 +19,7 @@ NOW = time.time()
 def move_old_files(directory, destination, days_old):
     """ Move files older than specified days to a backup folder. """
     if not os.path.exists(destination):
-        os.makedirs(destination)
+        os.makedirs(destination, exist_ok=True)
     
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
