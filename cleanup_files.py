@@ -1,57 +1,66 @@
+#!/usr/bin/env python3
+"""
+cleanup_files.py
+
+🧹 This script automatically organizes logs & backups:
+  ✅ Moves old logs to the backup folder
+  ✅ Ensures directories exist before accessing them
+  ✅ Uses correct paths inside GitHub Actions
+"""
+
 import os
 import shutil
 import time
 from pathlib import Path
-import platform
 
-# Detect if running in GitHub Actions
+# 🛠️ Configuration
+DAYS_OLD = 7  # Move files older than this
+
+# 🔍 Detect GitHub Actions Environment
 if "GITHUB_ACTIONS" in os.environ:
-    BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
+    BASE_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika"))
 else:
-    BACKUP_DIR = Path("/mnt/d/Backups")  # Local WSL2 path
+    BASE_DIR = Path("/home/jt-msi")
 
-# Debugging: Print the chosen backup directory
-print(f"🔍 Using BACKUP_DIR: {BACKUP_DIR}")
+LOG_DIR = BASE_DIR / "automation_logs"
+BACKUP_DIR = BASE_DIR / "backups"
 
-# Ensure the directory exists
-os.makedirs(BACKUP_DIR, exist_ok=True)
-
-# Define directories
-BASE_DIR = Path.home() / "control_center"
-LOG_DIR = Path.home() / "automation_logs"
-if "GITHUB_ACTIONS" in os.environ:
-    BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
-else:
-    if "GITHUB_ACTIONS" in os.environ:
-        BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
-    else:
-        BACKUP_DIR = Path("/mnt/d/Backups")  # Local WSL2 path
-
-
-# Set cleanup thresholds
-DAYS_OLD = 30
-NOW = time.time()
+# ✅ Ensure directories exist
+for dir_path in [LOG_DIR, BACKUP_DIR]:
+    if not dir_path.exists():
+        print(f"📂 Creating directory: {dir_path}")
+        os.makedirs(dir_path, exist_ok=True)
 
 def move_old_files(directory, destination, days_old):
-    """ Move files older than specified days to a backup folder. """
-    if not os.path.exists(destination):
-        print(f"🚨 ERROR: Directory '{directory}' does not exist. Creating it now...")
-        os.makedirs(directory, exist_ok=True)
-    
-    for file in os.listdir(directory):
-        file_path = os.path.join(directory, file)
-        if os.path.isfile(file_path):
-            file_age = NOW - os.path.getmtime(file_path)
-            if file_age > (days_old * 86400):  # Convert days to seconds
-                shutil.move(file_path, os.path.join(destination, file))
-                print(f"📁 Moved {file} to {destination}")
+    """
+    Moves files older than `days_old` from `directory` to `destination`
+    """
+    print(f"🛠️ Checking for old files in: {directory}")
+
+    if not directory.exists():
+        print(f"🚨 ERROR: Directory '{directory}' does not exist! Skipping...")
+        return
+
+    cutoff_time = time.time() - (days_old * 86400)  # Convert days to seconds
+    moved_files = 0
+
+    for file in directory.iterdir():
+        if file.is_file() and file.stat().st_mtime < cutoff_time:
+            target_path = destination / file.name
+            print(f"📦 Moving {file} → {target_path}")
+            shutil.move(str(file), str(target_path))
+            moved_files += 1
+
+    print(f"✅ Moved {moved_files} old files to {destination}")
 
 def cleanup():
+    """
+    Runs the cleanup process
+    """
+    print(f"🔍 Using BACKUP_DIR: {BACKUP_DIR}")
     print("🧹 Running File Cleanup...")
 
-    # Move old logs & backups
     move_old_files(LOG_DIR, BACKUP_DIR / "logs", DAYS_OLD)
-    move_old_files(BASE_DIR, BACKUP_DIR / "scripts", DAYS_OLD)
 
     print("✅ Cleanup Completed.")
 
