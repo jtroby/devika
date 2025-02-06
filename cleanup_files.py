@@ -10,7 +10,11 @@ LOG_DIR = Path.home() / "automation_logs"
 if "GITHUB_ACTIONS" in os.environ:
     BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
 else:
-    BACKUP_DIR = Path("/mnt/d/Backups")
+    if "GITHUB_ACTIONS" in os.environ:
+        BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
+    else:
+        BACKUP_DIR = Path("/mnt/d/Backups")  # Local WSL2 path
+
 
 # Set cleanup thresholds
 DAYS_OLD = 30
