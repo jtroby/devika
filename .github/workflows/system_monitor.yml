@@ -5,8 +5,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 3 * * *"
-  workflow_dispatch:
+    - cron: "0 3 * * *" # Runs daily at 03:00 UTC
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   cleanup:
@@ -18,37 +18,42 @@ jobs:
         with:
           submodules: false
           fetch-depth: 1
-      - name: 🔍 Debug Directory Permissions
+
+      - name: 🔍 Debug Directory Structure Before Backup
         run: |
-          echo "🔍 Checking Current User & Groups"
-          whoami
-          id
+          echo "🔍 Checking Available Directories..."
+          ls -la ${{ github.workspace }}
+          echo "🔍 Checking Home Directory..."
+          ls -la ~ || echo "🚨 Home directory not accessible!"
 
-          echo "🔍 Checking Home Directory"
-          ls -ld ~
-
-          echo "🔍 Checking automation_logs Directory"
-          ls -ld automation_logs || echo "🚨 automation_logs NOT FOUND!"
-
-          echo "🔍 Checking backups Directory"
-          ls -ld backups || echo "🚨 backups NOT FOUND!"
-
-      - name: 🔧 Fix Permissions for automation_logs
+      - name: 📂 Ensure automation_logs Directory Exists
         run: |
-          chmod -R 777 automation_logs
-
-      - name: 📂 Verify Files Exist
-        run: |
-          echo "Current Directory: $(pwd)"
-          ls -la
+          mkdir -p ~/automation_logs
+          echo "✅ Created ~/automation_logs"
 
       - name: 🧹 Run Cleanup Script
-        run: python3 cleanup_files.py
+        run: |
+          python3 cleanup_files.py
+        working-directory: ${{ github.workspace }}
 
       - name: 📤 Commit and Push Backup Changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add backups/
-          git commit -m "🛠️ Automated backup update [CI]" || echo "No changes to commit"
+
+          # Ensure automation_logs exists before adding
+          if [ -d "$HOME/automation_logs" ]; then
+            git add automation_logs/ || echo "⚠️ No logs to add"
+          else
+            echo "🚨 Skipping automation_logs (directory missing)"
+          fi
+
+          # Ensure control_center exists before adding
+          if [ -d "$HOME/control_center" ]; then
+            git add control_center/ || echo "⚠️ No changes in control_center"
+          else
+            echo "🚨 Skipping control_center (directory missing)"
+          fi
+
+          git commit -m "🔄 Auto-Backup System State - $(date)" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
