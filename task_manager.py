@@ -1,3 +1,4 @@
+from ast import main
 import requests
 import json
 import logging
@@ -25,3 +26,4 @@ if __name__ == "__main__":
     task = "Analyze market volatility for SPX"
     result = route_task(task)
     print("🔹 Task Result:", result)
+    main()
