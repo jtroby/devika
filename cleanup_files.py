@@ -8,7 +8,7 @@ import platform
 BASE_DIR = Path.home() / "control_center"
 LOG_DIR = Path.home() / "automation_logs"
 if "GITHUB_ACTIONS" in os.environ:
-    BACKUP_DIR = Path("/home/runner/work/devika/devika/backups")
+    BACKUP_DIR = Path(os.getenv("GITHUB_WORKSPACE", "/home/runner/work/devika/devika")) / "backups"
 else:
     BACKUP_DIR = Path("/mnt/d/Backups")
 

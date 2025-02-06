@@ -14,10 +14,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Ensure Backup Directory Exists
+        run: mkdir -p ${{ github.workspace }}/backups && chmod -R 777 ${{ github.workspace }}/backups
+
       - name: Run Cleanup Script
         run: python3 cleanup_files.py
-        working-directory: ${{ github.workspace }}
-
 
       - name: Configure Git
         run: |
