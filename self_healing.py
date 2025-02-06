@@ -77,7 +77,7 @@ def restart_component():
     Restarts the uvicorn component by stopping the current instance and starting a new one.
     """
     logging.info("Restarting the component...")
-    stop_uvicorn()
+    stop_uvicorn() 
     time.sleep(5)  # Optional delay to ensure port release
     start_uvicorn()
 
